@@ -1,6 +1,5 @@
 package com.ezgroceries.shoppinglist.core;
 
-import com.ezgroceries.shoppinglist.contract.Cocktail;
 import com.ezgroceries.shoppinglist.contract.ShoppingList;
 import org.springframework.stereotype.Component;
 

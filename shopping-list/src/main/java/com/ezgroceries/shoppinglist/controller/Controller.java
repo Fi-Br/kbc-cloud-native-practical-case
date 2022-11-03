@@ -1,5 +1,6 @@
 package com.ezgroceries.shoppinglist.controller;
 
+import com.ezgroceries.shoppinglist.contract.Cocktail;
 import com.ezgroceries.shoppinglist.contract.NewCocktail;
 import com.ezgroceries.shoppinglist.contract.NewShoppingList;
 import com.ezgroceries.shoppinglist.contract.ShoppingList;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -21,14 +23,26 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-public class ShoppingListController {
-    private static final Logger log = LoggerFactory.getLogger(CocktailController.class);
+public class Controller {
+    private static final Logger log = LoggerFactory.getLogger(Controller.class);
 
+    OverviewCocktails overviewCocktails;
     GetShoppingLIst getShoppingLIst;
 
     @Autowired
-    public ShoppingListController(GetShoppingLIst getShoppingLIst){
+    public Controller(GetShoppingLIst getShoppingLIst, OverviewCocktails overviewCocktails){
         this.getShoppingLIst = getShoppingLIst;
+        this.overviewCocktails = overviewCocktails;
+    }
+
+    @GetMapping(value = "/cocktails")
+    public ResponseEntity<List<Cocktail>> getCocktails(@RequestParam("search") String search){
+        log.debug("Get Cocktails requested with search " + search );
+
+        if (search.equals("Russian")) {
+            return ResponseEntity.ok(overviewCocktails.returnCocktailList(search));
+        }
+        return null;
     }
 
     @PostMapping(value= "/shopping-lists")
@@ -55,7 +69,7 @@ public class ShoppingListController {
     public ResponseEntity<ShoppingList> getShoppingList(@PathVariable("shoppingListId") UUID shoppingListId){
         log.debug("Get Shopping List for shoppingListId " + shoppingListId );
 
-        return ResponseEntity.ok( getShoppingLIst.returnShoppingList(shoppingListId));
+        return ResponseEntity.ok(getShoppingLIst.returnShoppingList(shoppingListId));
 
     }
 

@@ -2,7 +2,6 @@ package com.ezgroceries.shoppinglist.core;
 
 import com.ezgroceries.shoppinglist.contract.Cocktail;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +21,7 @@ public class OverviewCocktailsImpl implements OverviewCocktails {
 
         List<Cocktail> cocktails = new ArrayList<>();
         cocktails.add(createMargerita());
-        cocktails.add(createMargerita());
+        cocktails.add(createBlueMargerita());
 
         return cocktails;
     };
@@ -43,7 +42,7 @@ public class OverviewCocktailsImpl implements OverviewCocktails {
         return new Cocktail(cocktailId,name,glass,instructions,image,ingredients);
     }
 
-    public Cocktail setBlueMargerita(){
+    public Cocktail createBlueMargerita(){
         cocktailId = UUID.randomUUID();
         name = "Blue Margerita";
         glass = "Cocktail glass";
