@@ -1,26 +1,15 @@
 package com.ezgroceries.shoppinglist.controller;
 
-import com.ezgroceries.shoppinglist.EzGroceriesShoppingListApplication;
 import com.ezgroceries.shoppinglist.contract.Cocktail;
 import com.ezgroceries.shoppinglist.contract.ShoppingList;
 import com.ezgroceries.shoppinglist.core.GetShoppingLIst;
 import com.ezgroceries.shoppinglist.core.OverviewCocktails;
-import com.ezgroceries.shoppinglist.core.model.CocktailDBResponse;
-import com.ezgroceries.shoppinglist.repository.CocktailDBClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
@@ -38,17 +27,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = EzGroceriesShoppingListApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ControllerTest {
-
-    TestRestTemplate testRestTemplate = new TestRestTemplate();
+@WebMvcTest(Controller.class)
+public class ControllerUnitTest {
 
     @Autowired
     MockMvc mockMvc;
 
     @MockBean
-    private CocktailDBClient cocktailDBClient;
+    private OverviewCocktails overviewCocktails;
 
     @MockBean
     private GetShoppingLIst getShoppingList;
@@ -59,19 +45,10 @@ public class ControllerTest {
     private String instructions;
     private String image;
     private List<String> ingredients;
-    private String ingredient1 = "Tequilla";
-    private String ingredient2 = "Triple sec";
-    private String ingredient3 = "Lime juice";
-    private String ingredient4 = "Salt";
-    private CocktailDBResponse.DrinkResource whiteRussian;
     private Cocktail margerita;
     private UUID shoppingListId;
     private ShoppingList shoppingList;
     private List<ShoppingList> allShoppingLists;
-    private CocktailDBResponse cocktailDBResponse;
-
-    @Autowired
-    OverviewCocktails overviewCocktails;
 
     @BeforeEach
     public void createCocktails(){
@@ -83,53 +60,45 @@ public class ControllerTest {
         image = "https://www.thecocktaildb.com/images/media/drink/wpxpvu1439905379.jpg";
 
         ingredients = new ArrayList<>();
-        ingredients.add(ingredient1);
-        ingredients.add(ingredient2);
-        ingredients.add(ingredient3);
-        ingredients.add(ingredient4);
+        ingredients.add("Tequilla");
+        ingredients.add("Triple sec");
+        ingredients.add("Lime juice");
+        ingredients.add("Salt");
 
         margerita = new Cocktail(cocktailId,name,glass,instructions,image,ingredients);
-        whiteRussian = new CocktailDBResponse.DrinkResource(cocktailId.toString(),name,glass,instructions,image,ingredient1,ingredient2,ingredient3);
 
         shoppingList = new ShoppingList(shoppingListId,name,ingredients);
         allShoppingLists = new ArrayList<>();
         allShoppingLists.add(shoppingList);
 
-        cocktailDBResponse = new CocktailDBResponse();
-        List<CocktailDBResponse.DrinkResource> cocktailList = new ArrayList<>();
-        cocktailList.add(whiteRussian);
-        cocktailDBResponse.setDrinks(cocktailList);
-        List<CocktailDBResponse.DrinkResource> cocktailListOut = cocktailDBResponse.getDrinks();
-
-        CocktailDBResponse.DrinkResource filip = cocktailListOut.get(0);
-        System.out.println(filip.getIdDrink());
     }
 
     @Test
     public void testSuccesfullOverviewCocktails() throws Exception{
-        given(cocktailDBClient.searchCocktails("russian"))
-                .willReturn(cocktailDBResponse);
+        List<Cocktail> cocktails = Arrays.asList(margerita);
 
-        ResponseEntity<String> response = testRestTemplate.exchange("/cocktails?search=russian", HttpMethod.GET, ),H
-/*        mockMvc.perform(get("/cocktails?search=russian"))
+        given(overviewCocktails.returnCocktailList("russian"))
+                .willReturn(cocktails);
+
+        mockMvc.perform(get("/cocktails?search=russian"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("$[0]cocktailId").value(cocktailId.toString()))
+                .andExpect(jsonPath("$[0]cocktailId").value(cocktailId.toString()))
                 .andExpect(jsonPath("$[0]name").value(name))
                 .andExpect(jsonPath("$[0]glass").value(glass))
                 .andExpect(jsonPath("$[0]instructions").value(instructions))
                 .andExpect(jsonPath("$[0]image").value(image))
-                .andExpect(jsonPath("$[0]ingredients").value(ingredients));*/
+                .andExpect(jsonPath("$[0]ingredients").value(ingredients));
 
-        verify(cocktailDBClient).searchCocktails("russian");
+        verify(overviewCocktails).returnCocktailList("russian");
     }
 
     @Test
     public void testWithWrongInputOverviewCocktails() throws Exception{
         List<Cocktail> cocktails = Arrays.asList(margerita);
 
-        given(cocktailDBClient.searchCocktails("russian"))
-                .willReturn(cocktailDBResponse);
+        given(overviewCocktails.returnCocktailList("russian"))
+                .willReturn(cocktails);
 
         mockMvc.perform(get("/cocktails?search=a"))
                 .andExpect(status().isOk())

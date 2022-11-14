@@ -1,6 +1,9 @@
 package com.ezgroceries.shoppinglist.core;
 
 import com.ezgroceries.shoppinglist.contract.Cocktail;
+import com.ezgroceries.shoppinglist.core.model.CocktailDBResponse;
+import com.ezgroceries.shoppinglist.repository.CocktailDBClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -9,52 +12,32 @@ import java.util.UUID;
 
 @Component("OverviewCocktails")
 public class OverviewCocktailsImpl implements OverviewCocktails {
-    private UUID cocktailId;
-    private String name;
-    private String glass;
-    private String instructions;
-    private String image;
-    private List<String> ingredients;
+    CocktailDBClient cocktailDBClient;
 
+    @Autowired
+    public OverviewCocktailsImpl(CocktailDBClient cocktailDBClient){
+        this.cocktailDBClient = cocktailDBClient;
+    }
 
     public List<Cocktail> returnCocktailList(String search){
-
-        List<Cocktail> cocktails = new ArrayList<>();
-        cocktails.add(createMargerita());
-        cocktails.add(createBlueMargerita());
-
-        return cocktails;
+        System.out.println("in impl " + search);
+        return mapCocktailDBListOnCocktailList(cocktailDBClient.searchCocktails(search).getDrinks());
     };
 
-    public Cocktail createMargerita(){
-        cocktailId = UUID.randomUUID();
-        name = "Margerita";
-        glass = "Cocktail glass";
-        instructions = "Rub the rim of the glass with the lime slice to make the salt stick to it. Take care to moisten..";
-        image = "https://www.thecocktaildb.com/images/media/drink/wpxpvu1439905379.jpg";
+    private List<Cocktail> mapCocktailDBListOnCocktailList(List<CocktailDBResponse.DrinkResource> drinkResourceList){
 
-        ingredients = new ArrayList<>();
-        ingredients.add("Tequilla");
-        ingredients.add("Triple sec");
-        ingredients.add("Lime juice");
-        ingredients.add("Salt");
+        List<Cocktail> cocktailList = new ArrayList<>();
+        drinkResourceList.forEach(drinkResource ->
+                {cocktailList.add(new Cocktail(
+                        UUID.randomUUID(), //I don't use the ID from drinkResource because this isn't a valid UUID
+                        drinkResource.getStrDrink(),
+                        drinkResource.getStrGlass(),
+                        drinkResource.getStrInstructions(),
+                        drinkResource.getStrDrinkThumb(),
+                        drinkResource.returnIngredientsAsList()));
+                });
 
-        return new Cocktail(cocktailId,name,glass,instructions,image,ingredients);
-    }
+        return cocktailList;
+    };
 
-    public Cocktail createBlueMargerita(){
-        cocktailId = UUID.randomUUID();
-        name = "Blue Margerita";
-        glass = "Cocktail glass";
-        instructions = "Rub rim of cocktail glass with lime juice. Dip rim in coarse salt..";
-        image = "https://www.thecocktaildb.com/images/media/drink/qtvvyq1439905913.jpg";
-
-        ingredients = new ArrayList<>();
-        ingredients.add("Tequilla");
-        ingredients.add("Blue Curacao");
-        ingredients.add("Lime juice");
-        ingredients.add("Salt");
-
-        return new Cocktail(cocktailId,name,glass,instructions,image,ingredients);
-    }
 }

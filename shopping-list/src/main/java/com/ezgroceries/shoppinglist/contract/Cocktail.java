@@ -43,5 +43,4 @@ public class Cocktail {
         this.image = image;
         this.ingredients = ingredients;
     }
-
 }

@@ -38,8 +38,9 @@ public class Controller {
     @GetMapping(value = "/cocktails")
     public ResponseEntity<List<Cocktail>> getCocktails(@RequestParam("search") String search){
         log.debug("Get Cocktails requested with search " + search );
-
-        if (search.equals("Russian")) {
+        System.out.println("in controller");
+        if (search.equals("russian")) {
+            System.out.println("russian in controller");
             return ResponseEntity.ok(overviewCocktails.returnCocktailList(search));
         }
         return null;
