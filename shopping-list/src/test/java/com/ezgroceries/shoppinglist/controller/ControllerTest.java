@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -38,8 +39,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(SpringExtension.class)
+
 @SpringBootTest(classes = EzGroceriesShoppingListApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc
 public class ControllerTest {
 
     TestRestTemplate testRestTemplate = new TestRestTemplate();
@@ -86,7 +88,6 @@ public class ControllerTest {
         ingredients.add(ingredient1);
         ingredients.add(ingredient2);
         ingredients.add(ingredient3);
-        ingredients.add(ingredient4);
 
         margerita = new Cocktail(cocktailId,name,glass,instructions,image,ingredients);
         whiteRussian = new CocktailDBResponse.DrinkResource(cocktailId.toString(),name,glass,instructions,image,ingredient1,ingredient2,ingredient3);
@@ -110,8 +111,7 @@ public class ControllerTest {
         given(cocktailDBClient.searchCocktails("russian"))
                 .willReturn(cocktailDBResponse);
 
-        ResponseEntity<String> response = testRestTemplate.exchange("/cocktails?search=russian", HttpMethod.GET, ),H
-/*        mockMvc.perform(get("/cocktails?search=russian"))
+       mockMvc.perform(get("/cocktails?search=russian"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
 //                .andExpect(jsonPath("$[0]cocktailId").value(cocktailId.toString()))
@@ -119,7 +119,7 @@ public class ControllerTest {
                 .andExpect(jsonPath("$[0]glass").value(glass))
                 .andExpect(jsonPath("$[0]instructions").value(instructions))
                 .andExpect(jsonPath("$[0]image").value(image))
-                .andExpect(jsonPath("$[0]ingredients").value(ingredients));*/
+                .andExpect(jsonPath("$[0]ingredients").value(ingredients));
 
         verify(cocktailDBClient).searchCocktails("russian");
     }
