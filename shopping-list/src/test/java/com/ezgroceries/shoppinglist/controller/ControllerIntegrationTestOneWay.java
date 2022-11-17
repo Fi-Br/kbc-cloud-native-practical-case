@@ -7,6 +7,7 @@ import com.ezgroceries.shoppinglist.core.GetShoppingLIst;
 import com.ezgroceries.shoppinglist.core.OverviewCocktails;
 import com.ezgroceries.shoppinglist.core.model.CocktailDBResponse;
 import com.ezgroceries.shoppinglist.repository.CocktailDBClient;
+import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,12 +18,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,13 +45,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @SpringBootTest(classes = EzGroceriesShoppingListApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
-public class ControllerTest {
-
-    TestRestTemplate testRestTemplate = new TestRestTemplate();
+public class ControllerIntegrationTestOneWay {
 
     @Autowired
-    MockMvc mockMvc;
+    private WebApplicationContext webApplicationContext;
+    private MockMvc mockMvc;
 
     @MockBean
     private CocktailDBClient cocktailDBClient;
@@ -76,6 +78,11 @@ public class ControllerTest {
     OverviewCocktails overviewCocktails;
 
     @BeforeEach
+    public void setup(){
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+    }
+
+    @BeforeEach
     public void createCocktails(){
         cocktailId = UUID.fromString("00000000-0000-0000-0000-000000000001");
         shoppingListId = UUID.fromString("00000000-0000-0000-0000-000000000001");
@@ -100,10 +107,7 @@ public class ControllerTest {
         List<CocktailDBResponse.DrinkResource> cocktailList = new ArrayList<>();
         cocktailList.add(whiteRussian);
         cocktailDBResponse.setDrinks(cocktailList);
-        List<CocktailDBResponse.DrinkResource> cocktailListOut = cocktailDBResponse.getDrinks();
 
-        CocktailDBResponse.DrinkResource filip = cocktailListOut.get(0);
-        System.out.println(filip.getIdDrink());
     }
 
     @Test
@@ -114,7 +118,6 @@ public class ControllerTest {
        mockMvc.perform(get("/cocktails?search=russian"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("$[0]cocktailId").value(cocktailId.toString()))
                 .andExpect(jsonPath("$[0]name").value(name))
                 .andExpect(jsonPath("$[0]glass").value(glass))
                 .andExpect(jsonPath("$[0]instructions").value(instructions))
@@ -125,104 +128,9 @@ public class ControllerTest {
     }
 
     @Test
-    public void testWithWrongInputOverviewCocktails() throws Exception{
-        List<Cocktail> cocktails = Arrays.asList(margerita);
-
-        given(cocktailDBClient.searchCocktails("russian"))
-                .willReturn(cocktailDBResponse);
-
-        mockMvc.perform(get("/cocktails?search=a"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").doesNotExist());
-    }
-
-    @Test
-    public void testSuccesfullAddShoppingListRequest() throws Exception{
-
-        mockMvc.perform(post("/shopping-lists")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"name\" : \"Filip\"}"))
-                .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "http://localhost/shopping-lists/Filip"));
-        ;
-    }
-
-    @Test
-    public void testFailAddShoppingListRequest() throws Exception{
-
-        mockMvc.perform(post("/shopping-lists")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(""))
+    public void testUnSuccesfullOverviewCocktails() throws Exception{
+        mockMvc.perform(get("/cocktails?search=filip"))
                 .andExpect(status().isBadRequest());
-    }
 
-    @Test
-    public void testSuccesfullAddCocktailRequest() throws Exception{
-
-        mockMvc.perform(post("/shopping-lists/1/cocktails")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"cocktailId\" : \"Filip\"}"))
-                .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "http://localhost/shopping-lists/1/cocktails/Filip"));
-    }
-
-    @Test
-    public void testFailWithStringAddCocktailRequest() throws Exception{
-
-        mockMvc.perform(post("/shopping-lists/Filip/cocktails")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"cocktailId\" : \"Filip\"}"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void testFailWithEmptyJsonAddCocktailRequest() throws Exception{
-
-        mockMvc.perform(post("/shopping-lists/Filip/cocktails")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{}"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void testSuccesfullShoppingList() throws Exception{
-
-        given(getShoppingList.returnShoppingList(any()))
-                .willReturn(shoppingList);
-
-        mockMvc.perform(get("/shopping-lists/123e4567-e89b-12d3-a456-426614174000"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("shoppingListId").value(shoppingListId.toString()))
-                .andExpect(jsonPath("name").value(name))
-                .andExpect(jsonPath("ingredients").value(ingredients));
-
-        verify(getShoppingList).returnShoppingList(any());
-    }
-
-    @Test
-    public void testWithWrongInput() throws Exception{
-
-        given(getShoppingList.returnShoppingList(any()))
-                .willReturn(shoppingList);
-
-        mockMvc.perform(get("/shopping-lists/a"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void testSuccesfullAllShoppingList() throws Exception{
-
-        given(getShoppingList.returnAllShoppingList())
-                .willReturn(allShoppingLists);
-
-        mockMvc.perform(get("/shopping-lists"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0]shoppingListId").value(shoppingListId.toString()))
-                .andExpect(jsonPath("$[0]name").value(name))
-                .andExpect(jsonPath("$[0]ingredients").value(ingredients));
-
-        verify(getShoppingList).returnAllShoppingList();
     }
 }

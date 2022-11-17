@@ -101,8 +101,7 @@ public class ControllerUnitTest {
                 .willReturn(cocktails);
 
         mockMvc.perform(get("/cocktails?search=a"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").doesNotExist());
+                .andExpect(status().isBadRequest());
     }
 
     @Test

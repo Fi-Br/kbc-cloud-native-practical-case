@@ -20,7 +20,6 @@ public class OverviewCocktailsImpl implements OverviewCocktails {
     }
 
     public List<Cocktail> returnCocktailList(String search){
-        System.out.println("in impl " + search);
         return mapCocktailDBListOnCocktailList(cocktailDBClient.searchCocktails(search).getDrinks());
     };
 

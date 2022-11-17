@@ -6,6 +6,7 @@ import com.ezgroceries.shoppinglist.contract.NewShoppingList;
 import com.ezgroceries.shoppinglist.contract.ShoppingList;
 import com.ezgroceries.shoppinglist.core.GetShoppingLIst;
 import com.ezgroceries.shoppinglist.core.OverviewCocktails;
+import com.ezgroceries.shoppinglist.core.exceptions.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +39,11 @@ public class Controller {
     @GetMapping(value = "/cocktails")
     public ResponseEntity<List<Cocktail>> getCocktails(@RequestParam("search") String search){
         log.debug("Get Cocktails requested with search " + search );
-        System.out.println("in controller");
+
         if (search.equals("russian")) {
-            System.out.println("russian in controller");
             return ResponseEntity.ok(overviewCocktails.returnCocktailList(search));
         }
-        return null;
+        throw new BadRequestException();
     }
 
     @PostMapping(value= "/shopping-lists")
