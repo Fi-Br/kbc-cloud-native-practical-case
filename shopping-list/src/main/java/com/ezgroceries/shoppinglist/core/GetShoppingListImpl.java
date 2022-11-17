@@ -9,10 +9,6 @@ import java.util.UUID;
 
 @Component("GetShoppingList")
 public class GetShoppingListImpl implements GetShoppingLIst {
-    private UUID shoppingListId;
-    private String name;
-    private List<String> ingredients;
-
 
     public ShoppingList returnShoppingList(UUID shoppingListId){
         return CreateStephaniesBirthdayhoppingList();
@@ -28,10 +24,10 @@ public class GetShoppingListImpl implements GetShoppingLIst {
     }
 
     public ShoppingList CreateStephaniesBirthdayhoppingList(){
-        shoppingListId = UUID.randomUUID();
-        name = "Stephanie's birthday";
+        UUID shoppingListId = UUID.randomUUID();
+        String name = "Stephanie's birthday";
 
-        ingredients = new ArrayList<>();
+        List<String> ingredients = new ArrayList<>();
         ingredients.add("Tequilla");
         ingredients.add("Triple sec");
         ingredients.add("Lime juice");
@@ -42,10 +38,10 @@ public class GetShoppingListImpl implements GetShoppingLIst {
     }
 
     public ShoppingList CreateMyBirthdayhoppingList(){
-        shoppingListId = UUID.randomUUID();
-        name = "My Birthday";
+        UUID shoppingListId = UUID.randomUUID();
+        String name = "My Birthday";
 
-        ingredients = new ArrayList<>();
+        List<String> ingredients = new ArrayList<>();
         ingredients.add("Tequilla");
         ingredients.add("Triple sec");
         ingredients.add("Lime juice");

@@ -38,7 +38,7 @@ public class Controller {
 
     @GetMapping(value = "/cocktails")
     public ResponseEntity<List<Cocktail>> getCocktails(@RequestParam("search") String search){
-        log.debug("Get Cocktails requested with search " + search );
+        log.info("Get Cocktails requested with search " + search );
 
         if (search.equals("russian")) {
             return ResponseEntity.ok(overviewCocktails.returnCocktailList(search));
@@ -48,6 +48,7 @@ public class Controller {
 
     @PostMapping(value= "/shopping-lists")
     public ResponseEntity<Void> addShoppingList(@RequestBody NewShoppingList newShoppingList){
+        log.debug("Get shopping List" );
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
                 .path("/{shoppingListId}")
@@ -58,6 +59,7 @@ public class Controller {
 
     @PostMapping(value= "/shopping-lists/{shoppingListId}/cocktails")
     public ResponseEntity<Void> addCocktail(@PathVariable long shoppingListId, @RequestBody NewCocktail newCocktail){
+        log.debug("shopping list - cocktails" );
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
                 .path("/{cocktailId}")
@@ -68,7 +70,7 @@ public class Controller {
 
     @GetMapping(value = "/shopping-lists/{shoppingListId}")
     public ResponseEntity<ShoppingList> getShoppingList(@PathVariable("shoppingListId") UUID shoppingListId){
-        log.debug("Get Shopping List for shoppingListId " + shoppingListId );
+        log.debug("shopping list " );
 
         return ResponseEntity.ok(getShoppingLIst.returnShoppingList(shoppingListId));
 
