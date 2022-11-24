@@ -7,7 +7,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableFeignClients
-@EntityScan("ezgroceries.shoppinglist")
+@EntityScan
 public class EzGroceriesShoppingListApplication {
 
     public static void main(String[] args) {

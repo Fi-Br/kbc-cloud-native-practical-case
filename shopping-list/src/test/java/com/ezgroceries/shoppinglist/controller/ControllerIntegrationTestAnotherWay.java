@@ -7,6 +7,7 @@ import com.ezgroceries.shoppinglist.core.GetShoppingLIst;
 import com.ezgroceries.shoppinglist.core.OverviewCocktails;
 import com.ezgroceries.shoppinglist.core.model.CocktailDBResponse;
 import com.ezgroceries.shoppinglist.repository.CocktailDBClient;
+import com.ezgroceries.shoppinglist.repository.CocktailRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,6 +3,8 @@ package com.ezgroceries.shoppinglist.core;
 import com.ezgroceries.shoppinglist.contract.Cocktail;
 import com.ezgroceries.shoppinglist.core.model.CocktailDBResponse;
 import com.ezgroceries.shoppinglist.repository.CocktailDBClient;
+import com.ezgroceries.shoppinglist.repository.CocktailRepository;
+import com.ezgroceries.shoppinglist.repository.jpa.CocktailEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +15,7 @@ import java.util.UUID;
 @Component("OverviewCocktails")
 public class OverviewCocktailsImpl implements OverviewCocktails {
     CocktailDBClient cocktailDBClient;
+    CocktailRepository cocktailRepository;
 
     @Autowired
     public OverviewCocktailsImpl(CocktailDBClient cocktailDBClient){
@@ -20,6 +23,7 @@ public class OverviewCocktailsImpl implements OverviewCocktails {
     }
 
     public List<Cocktail> returnCocktailList(String search){
+
         return mapCocktailDBListOnCocktailList(cocktailDBClient.searchCocktails(search).getDrinks());
     };
 
@@ -34,6 +38,9 @@ public class OverviewCocktailsImpl implements OverviewCocktails {
                         drinkResource.getStrInstructions(),
                         drinkResource.getStrDrinkThumb(),
                         drinkResource.returnIngredientsAsList()));
+                cocktailRepository.save(new CocktailEntity(
+                        drinkResource.getIdDrink(),
+                        drinkResource.getStrDrink()));
                 });
 
         return cocktailList;
