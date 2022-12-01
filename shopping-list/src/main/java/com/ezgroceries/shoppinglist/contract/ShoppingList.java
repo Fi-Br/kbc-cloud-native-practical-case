@@ -1,14 +1,21 @@
 package com.ezgroceries.shoppinglist.contract;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class ShoppingList {
     private UUID shoppingListId;
     private String name;
-    private List<String> ingredients;
+    private Set<String> ingredients;
 
-    public ShoppingList(UUID shoppingListId, String name, List<String> ingredients) {
+    public ShoppingList(){}
+
+    public ShoppingList(UUID shoppingListId, String name) {
+        this.shoppingListId = shoppingListId;
+        this.name = name;
+    }
+
+    public ShoppingList(UUID shoppingListId, String name, Set<String> ingredients) {
         this.shoppingListId = shoppingListId;
         this.name = name;
         this.ingredients = ingredients;
@@ -22,7 +29,7 @@ public class ShoppingList {
         return name;
     }
 
-    public List<String> getIngredients() {
+    public Set<String> getIngredients() {
         return ingredients;
     }
 

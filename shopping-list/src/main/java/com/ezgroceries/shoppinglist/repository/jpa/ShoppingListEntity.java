@@ -1,7 +1,11 @@
 package com.ezgroceries.shoppinglist.repository.jpa;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -14,7 +18,18 @@ import java.util.UUID;
 @Table(name="shopping_list")
 public class ShoppingListEntity {
     @Id
-    @Column(name = "ID")
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator",
+            parameters = {
+                    @Parameter(
+                            name = "uuid_gen_strategy_class",
+                            value = "org.hibernate.id.uuid.CustomVersionOneStrategy"
+                    )
+            }
+    )
+    @Column(name = "ID", updatable = false, nullable = false)
     private UUID shoppingListId;
 
     @Column(name = "NAME")
@@ -26,4 +41,27 @@ public class ShoppingListEntity {
             joinColumns = @JoinColumn(name = "shopping_list_id"),
             inverseJoinColumns = @JoinColumn(name = "cocktail_id"))
     Set<CocktailEntity> cocktailEntitySet;
+
+    public ShoppingListEntity(){}
+
+    public ShoppingListEntity(String name){
+        this.name = name;
+    }
+
+    public UUID getShoppingListId() {
+        return shoppingListId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Set<CocktailEntity> getCocktailEntitySet() {
+        return cocktailEntitySet;
+    }
+
+    public void addCocktailEntity(CocktailEntity cocktailEntity){
+        cocktailEntitySet.add(cocktailEntity);
+        cocktailEntity.getShoppingListEntitySet().add(this);
+    }
 }

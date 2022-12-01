@@ -3,11 +3,10 @@ package com.ezgroceries.shoppinglist.controller;
 import com.ezgroceries.shoppinglist.EzGroceriesShoppingListApplication;
 import com.ezgroceries.shoppinglist.contract.Cocktail;
 import com.ezgroceries.shoppinglist.contract.ShoppingList;
-import com.ezgroceries.shoppinglist.core.GetShoppingLIst;
+import com.ezgroceries.shoppinglist.core.ShoppingListService;
 import com.ezgroceries.shoppinglist.core.OverviewCocktails;
 import com.ezgroceries.shoppinglist.core.model.CocktailDBResponse;
 import com.ezgroceries.shoppinglist.repository.CocktailDBClient;
-import com.ezgroceries.shoppinglist.repository.CocktailRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,9 +43,9 @@ public class ControllerIntegrationTestOneWay {
     private CocktailDBClient cocktailDBClient;
 
     @MockBean
-    private GetShoppingLIst getShoppingList;
+    private ShoppingListService shoppingListService;
 
-    private UUID cocktailId;
+    private String drinkId;
     private String name;
     private String glass;
     private String instructions;
@@ -72,7 +72,7 @@ public class ControllerIntegrationTestOneWay {
 
     @BeforeEach
     public void createCocktails(){
-        cocktailId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        drinkId = "00000002";
         shoppingListId = UUID.fromString("00000000-0000-0000-0000-000000000001");
         name = "Margerita";
         glass = "Cocktail glass";
@@ -84,10 +84,10 @@ public class ControllerIntegrationTestOneWay {
         ingredients.add(ingredient2);
         ingredients.add(ingredient3);
 
-        margerita = new Cocktail(cocktailId,name,glass,instructions,image,ingredients);
-        whiteRussian = new CocktailDBResponse.DrinkResource(cocktailId.toString(),name,glass,instructions,image,ingredient1,ingredient2,ingredient3);
+        margerita = new Cocktail(drinkId,name,glass,instructions,image,ingredients);
+        whiteRussian = new CocktailDBResponse.DrinkResource(drinkId,name,glass,instructions,image,ingredient1,ingredient2,ingredient3);
 
-        shoppingList = new ShoppingList(shoppingListId,name,ingredients);
+        shoppingList = new ShoppingList(shoppingListId,name,new HashSet<>(ingredients));
         allShoppingLists = new ArrayList<>();
         allShoppingLists.add(shoppingList);
 

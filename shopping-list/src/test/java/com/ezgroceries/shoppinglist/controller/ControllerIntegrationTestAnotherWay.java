@@ -3,11 +3,10 @@ package com.ezgroceries.shoppinglist.controller;
 import com.ezgroceries.shoppinglist.EzGroceriesShoppingListApplication;
 import com.ezgroceries.shoppinglist.contract.Cocktail;
 import com.ezgroceries.shoppinglist.contract.ShoppingList;
-import com.ezgroceries.shoppinglist.core.GetShoppingLIst;
+import com.ezgroceries.shoppinglist.core.ShoppingListService;
 import com.ezgroceries.shoppinglist.core.OverviewCocktails;
 import com.ezgroceries.shoppinglist.core.model.CocktailDBResponse;
 import com.ezgroceries.shoppinglist.repository.CocktailDBClient;
-import com.ezgroceries.shoppinglist.repository.CocktailRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.mockito.BDDMockito.given;
@@ -40,14 +41,14 @@ public class ControllerIntegrationTestAnotherWay {
     private CocktailDBClient cocktailDBClient;
 
     @MockBean
-    private GetShoppingLIst getShoppingList;
+    private ShoppingListService shoppingListService;
 
-    private UUID cocktailId;
+    private String drinkId;
     private String name;
     private String glass;
     private String instructions;
     private String image;
-    private List<String> ingredients;
+    private Set<String> ingredients;
     private String ingredient1 = "Tequilla";
     private String ingredient2 = "Triple sec";
     private String ingredient3 = "Lime juice";
@@ -64,20 +65,20 @@ public class ControllerIntegrationTestAnotherWay {
 
     @BeforeEach
     public void createCocktails(){
-        cocktailId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        drinkId = "00000001";
         shoppingListId = UUID.fromString("00000000-0000-0000-0000-000000000001");
         name = "Margerita";
         glass = "Cocktail glass";
         instructions = "Rub the rim of the glass with the lime slice to make the salt stick to it. Take care to moisten..";
         image = "https://www.thecocktaildb.com/images/media/drink/wpxpvu1439905379.jpg";
 
-        ingredients = new ArrayList<>();
+        ingredients = new HashSet<>();
         ingredients.add(ingredient1);
         ingredients.add(ingredient2);
         ingredients.add(ingredient3);
 
-        margerita = new Cocktail(cocktailId,name,glass,instructions,image,ingredients);
-        whiteRussian = new CocktailDBResponse.DrinkResource(cocktailId.toString(),name,glass,instructions,image,ingredient1,ingredient2,ingredient3);
+        margerita = new Cocktail(drinkId,name,glass,instructions,image,new ArrayList<>(ingredients));
+        whiteRussian = new CocktailDBResponse.DrinkResource(drinkId,name,glass,instructions,image,ingredient1,ingredient2,ingredient3);
 
         shoppingList = new ShoppingList(shoppingListId,name,ingredients);
         allShoppingLists = new ArrayList<>();

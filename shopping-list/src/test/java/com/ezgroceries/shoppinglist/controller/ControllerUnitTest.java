@@ -2,7 +2,7 @@ package com.ezgroceries.shoppinglist.controller;
 
 import com.ezgroceries.shoppinglist.contract.Cocktail;
 import com.ezgroceries.shoppinglist.contract.ShoppingList;
-import com.ezgroceries.shoppinglist.core.GetShoppingLIst;
+import com.ezgroceries.shoppinglist.core.ShoppingListService;
 import com.ezgroceries.shoppinglist.core.OverviewCocktails;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,9 +38,9 @@ public class ControllerUnitTest {
     private OverviewCocktails overviewCocktails;
 
     @MockBean
-    private GetShoppingLIst getShoppingList;
+    private ShoppingListService shoppingListService;
 
-    private UUID cocktailId;
+    private String drinkId;
     private String name;
     private String glass;
     private String instructions;
@@ -52,7 +53,7 @@ public class ControllerUnitTest {
 
     @BeforeEach
     public void createCocktails(){
-        cocktailId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        drinkId = "00000001";;
         shoppingListId = UUID.fromString("00000000-0000-0000-0000-000000000001");
         name = "Margerita";
         glass = "Cocktail glass";
@@ -65,9 +66,9 @@ public class ControllerUnitTest {
         ingredients.add("Lime juice");
         ingredients.add("Salt");
 
-        margerita = new Cocktail(cocktailId,name,glass,instructions,image,ingredients);
+        margerita = new Cocktail(drinkId,name,glass,instructions,image,ingredients);
 
-        shoppingList = new ShoppingList(shoppingListId,name,ingredients);
+        shoppingList = new ShoppingList(shoppingListId,name,new HashSet<>(ingredients));
         allShoppingLists = new ArrayList<>();
         allShoppingLists.add(shoppingList);
 
@@ -83,7 +84,7 @@ public class ControllerUnitTest {
         mockMvc.perform(get("/cocktails?search=russian"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0]cocktailId").value(cocktailId.toString()))
+                .andExpect(jsonPath("$[0]drinkId").value(drinkId))
                 .andExpect(jsonPath("$[0]name").value(name))
                 .andExpect(jsonPath("$[0]glass").value(glass))
                 .andExpect(jsonPath("$[0]instructions").value(instructions))
@@ -94,17 +95,6 @@ public class ControllerUnitTest {
     }
 
     @Test
-    public void testWithWrongInputOverviewCocktails() throws Exception{
-        List<Cocktail> cocktails = Arrays.asList(margerita);
-
-        given(overviewCocktails.returnCocktailList("russian"))
-                .willReturn(cocktails);
-
-        mockMvc.perform(get("/cocktails?search=a"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     public void testSuccesfullAddShoppingListRequest() throws Exception{
 
         mockMvc.perform(post("/shopping-lists")
@@ -112,7 +102,6 @@ public class ControllerUnitTest {
                 .content("{\"name\" : \"Filip\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "http://localhost/shopping-lists/Filip"));
-        ;
     }
 
     @Test
@@ -155,7 +144,7 @@ public class ControllerUnitTest {
     @Test
     public void testSuccesfullShoppingList() throws Exception{
 
-        given(getShoppingList.returnShoppingList(any()))
+        given(shoppingListService.returnShoppingList(any()))
                 .willReturn(shoppingList);
 
         mockMvc.perform(get("/shopping-lists/123e4567-e89b-12d3-a456-426614174000"))
@@ -165,13 +154,13 @@ public class ControllerUnitTest {
                 .andExpect(jsonPath("name").value(name))
                 .andExpect(jsonPath("ingredients").value(ingredients));
 
-        verify(getShoppingList).returnShoppingList(any());
+        verify(shoppingListService).returnShoppingList(any());
     }
 
     @Test
     public void testWithWrongInput() throws Exception{
 
-        given(getShoppingList.returnShoppingList(any()))
+        given(shoppingListService.returnShoppingList(any()))
                 .willReturn(shoppingList);
 
         mockMvc.perform(get("/shopping-lists/a"))
@@ -181,7 +170,7 @@ public class ControllerUnitTest {
     @Test
     public void testSuccesfullAllShoppingList() throws Exception{
 
-        given(getShoppingList.returnAllShoppingList())
+        given(shoppingListService.returnAllShoppingList())
                 .willReturn(allShoppingLists);
 
         mockMvc.perform(get("/shopping-lists"))
@@ -191,6 +180,6 @@ public class ControllerUnitTest {
                 .andExpect(jsonPath("$[0]name").value(name))
                 .andExpect(jsonPath("$[0]ingredients").value(ingredients));
 
-        verify(getShoppingList).returnAllShoppingList();
+        verify(shoppingListService).returnAllShoppingList();
     }
 }

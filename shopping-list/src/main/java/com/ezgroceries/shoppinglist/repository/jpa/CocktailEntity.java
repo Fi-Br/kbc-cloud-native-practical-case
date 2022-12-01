@@ -67,7 +67,16 @@ public class CocktailEntity {
         return shoppingListEntitySet;
     }
 
+    public CocktailEntity(){}
+
     public CocktailEntity(String drinkId, String name, List<String> ingredients){
+        this.drinkId = drinkId;
+        this.name = name;
+        this.ingredients = new HashSet<>(ingredients);
+    }
+
+    public void UpdateNewCocktailEntity(UUID cocktailId, String drinkId, String name, List<String> ingredients){
+        this.cocktailId = cocktailId;
         this.drinkId = drinkId;
         this.name = name;
         this.ingredients = new HashSet<>(ingredients);

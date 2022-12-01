@@ -1,13 +1,13 @@
 package com.ezgroceries.shoppinglist.contract;
 
 public class NewCocktail {
-    private String cocktailId;
+    private String drinkId;
 
-    public String getCocktailId() {
-        return cocktailId;
+    public String getDrinkId() {
+        return drinkId;
     }
 
-    public void setCocktailId(String cocktailId) {
-        this.cocktailId = cocktailId;
+    public void setDrinkId(String drinkId) {
+        this.drinkId = drinkId;
     }
 }

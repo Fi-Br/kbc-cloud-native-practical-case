@@ -5,45 +5,52 @@ import com.ezgroceries.shoppinglist.core.model.CocktailDBResponse;
 import com.ezgroceries.shoppinglist.repository.CocktailDBClient;
 import com.ezgroceries.shoppinglist.repository.CocktailRepository;
 import com.ezgroceries.shoppinglist.repository.jpa.CocktailEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class OverviewCocktailsImpl implements OverviewCocktails {
-    @Autowired
-    CocktailDBClient cocktailDBClient;
-    @Autowired
-    CocktailRepository cocktailRepository;
 
+    private CocktailDBClient cocktailDBClient;
+
+    private CocktailRepository cocktailRepository;
+
+    public OverviewCocktailsImpl(CocktailDBClient cocktailDBClient, CocktailRepository cocktailRepository){
+        this.cocktailDBClient = cocktailDBClient;
+        this.cocktailRepository = cocktailRepository;
+    }
     @Override
-    @Transactional
     public List<Cocktail> returnCocktailList(String search){
         List<CocktailDBResponse.DrinkResource> drinkResourceList = cocktailDBClient.searchCocktails(search).getDrinks();
-        List<CocktailEntity> cocktailEntityList = new ArrayList<>();
 
         List<Cocktail> cocktailList = new ArrayList<>();
         drinkResourceList.forEach(drinkResource ->
         {cocktailList.add(new Cocktail(
-                UUID.randomUUID(), //I don't use the ID from drinkResource because this isn't a valid UUID
+                drinkResource.getIdDrink(),
                 drinkResource.getStrDrink(),
                 drinkResource.getStrGlass(),
                 drinkResource.getStrInstructions(),
                 drinkResource.getStrDrinkThumb(),
                 drinkResource.returnIngredientsAsList()));
-            cocktailEntityList.add(cocktailRepository.save(new CocktailEntity(
-                    drinkResource.getIdDrink(),
-                    drinkResource.getStrDrink(),
-                    drinkResource.returnIngredientsAsList())));
+            cocktailRepository.save(createOrUpdateCocktailDb(drinkResource));
         });
 
         return cocktailList;
-    };
+    }
 
+    private CocktailEntity createOrUpdateCocktailDb(CocktailDBResponse.DrinkResource drinkResource){
+        CocktailEntity cocktailEntity = cocktailRepository.findCocktailEntityByDrinkId(drinkResource.getIdDrink());
 
+        if (cocktailEntity == null){
+            cocktailEntity = new CocktailEntity(drinkResource.getIdDrink(), drinkResource.getStrDrink(), drinkResource.returnIngredientsAsList());
+        }else{
+            cocktailEntity.UpdateNewCocktailEntity(cocktailEntity.getCocktailId(),drinkResource.getIdDrink(),drinkResource.getStrDrink(),drinkResource.returnIngredientsAsList());
+        }
+
+        return cocktailEntity;
+    }
 
 }
+
