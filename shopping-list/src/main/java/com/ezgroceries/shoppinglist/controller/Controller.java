@@ -27,14 +27,10 @@ import java.util.UUID;
 public class Controller {
     private static final Logger log = LoggerFactory.getLogger(Controller.class);
 
-    OverviewCocktails overviewCocktails;
-    GetShoppingLIst getShoppingLIst;
-
     @Autowired
-    public Controller(GetShoppingLIst getShoppingLIst, OverviewCocktails overviewCocktails){
-        this.getShoppingLIst = getShoppingLIst;
-        this.overviewCocktails = overviewCocktails;
-    }
+    OverviewCocktails overviewCocktails;
+    @Autowired
+    GetShoppingLIst getShoppingLIst;
 
     @GetMapping(value = "/cocktails")
     public ResponseEntity<List<Cocktail>> getCocktails(@RequestParam("search") String search){

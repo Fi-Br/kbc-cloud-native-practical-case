@@ -1,13 +1,18 @@
 package com.ezgroceries.shoppinglist.repository.jpa;
 
-import org.hsqldb.lib.Set;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -15,7 +20,18 @@ import java.util.UUID;
 public class CocktailEntity {
 
     @Id
-    @Column(name = "ID")
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator",
+            parameters = {
+                    @Parameter(
+                            name = "uuid_gen_strategy_class",
+                            value = "org.hibernate.id.uuid.CustomVersionOneStrategy"
+                    )
+            }
+    )
+    @Column(name = "ID", updatable = false, nullable = false)
     private UUID cocktailId;
 
     @Column(name = "ID_DRINK")
@@ -51,8 +67,9 @@ public class CocktailEntity {
         return shoppingListEntitySet;
     }
 
-    public CocktailEntity(String drinkId,String Name){
+    public CocktailEntity(String drinkId, String name, List<String> ingredients){
         this.drinkId = drinkId;
         this.name = name;
+        this.ingredients = new HashSet<>(ingredients);
     }
 }

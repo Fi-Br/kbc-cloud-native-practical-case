@@ -1,7 +1,5 @@
 package com.ezgroceries.shoppinglist.repository.jpa;
 
-import org.hsqldb.lib.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -9,6 +7,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -18,8 +17,8 @@ public class ShoppingListEntity {
     @Column(name = "ID")
     private UUID shoppingListId;
 
-    @Column(name = "TEXT")
-    private String text;
+    @Column(name = "NAME")
+    private String name;
 
     @ManyToMany
     @JoinTable(
