@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -63,5 +65,15 @@ public class ShoppingListEntity {
     public void addCocktailEntity(CocktailEntity cocktailEntity){
         cocktailEntitySet.add(cocktailEntity);
         cocktailEntity.getShoppingListEntitySet().add(this);
+    }
+
+    public void setTestShoppingListID(UUID shoppingListId, String name){
+        this.shoppingListId = shoppingListId;
+        this.name = name;
+        this.cocktailEntitySet = new HashSet<>();
+    }
+
+    public void addCocktailEntityList(Set<CocktailEntity> cocktailEntityList){
+        this.cocktailEntitySet = cocktailEntityList;
     }
 }

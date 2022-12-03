@@ -29,7 +29,11 @@ public class ShoppingListServiceImplService implements ShoppingListService {
     }
 
     public ShoppingList returnShoppingList(UUID shoppingListId){
+
         ShoppingListEntity shoppingListEntity = shoppingListRepository.findShoppingListEntityByShoppingListId(shoppingListId);
+        if (shoppingListEntity == null){
+            throw new BadRequestException();
+        }
 
         Set<CocktailEntity> cocktailEntityList = cocktailRepository.findCocktailEntitiesByShoppingListEntitySet(shoppingListEntity);
 
@@ -44,7 +48,9 @@ public class ShoppingListServiceImplService implements ShoppingListService {
         List<ShoppingList> allShoppingLists = new ArrayList<>();
 
         List<ShoppingListEntity> shoppingListEntityList = shoppingListRepository.findAll();
-
+        if (shoppingListEntityList == null){
+            throw new BadRequestException();
+        }
         shoppingListEntityList.forEach(shoppingListEntity1 ->
             allShoppingLists.add(returnShoppingList(shoppingListEntity1.getShoppingListId())));
 
