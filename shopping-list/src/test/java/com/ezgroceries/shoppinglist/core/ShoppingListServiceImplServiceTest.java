@@ -12,12 +12,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-
+import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -35,15 +30,12 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {
-        ShoppingListServiceImplService.class
-})
+@ExtendWith(MockitoExtension.class)
 class ShoppingListServiceImplServiceTest {
-    @MockBean
+    @Mock
     private ShoppingListRepository shoppingListRepository;
 
-    @MockBean
+    @Mock
     private CocktailRepository cocktailRepository;
 
     @Mock
@@ -52,8 +44,12 @@ class ShoppingListServiceImplServiceTest {
     @Mock
     private ShoppingListEntity shoppingListEntity;
 
-    @Autowired
     private ShoppingListServiceImplService shoppingListService;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        shoppingListService = new ShoppingListServiceImplService(shoppingListRepository,cocktailRepository);
+    }
 
     //*******************************
     //Return One shopping List tests
@@ -246,11 +242,6 @@ class ShoppingListServiceImplServiceTest {
 
         given(shoppingListRepository.findShoppingListEntityByName(SHOPPING_LIST_NAME))
                 .willReturn(null);
-        given(cocktailRepository.findCocktailEntityByDrinkId(newCocktail.getDrinkId()))
-                .willReturn(cocktailEntity);
-
-        given(shoppingListRepository.save(any()))
-                .willReturn(shoppingListEntity);
 
         Assertions.assertThrows(BadRequestException.class, () -> shoppingListService.addCocktailToShoppingList(SHOPPING_LIST_NAME,newCocktail));
 
@@ -274,9 +265,6 @@ class ShoppingListServiceImplServiceTest {
                 .willReturn(shoppingListEntity);
         given(cocktailRepository.findCocktailEntityByDrinkId(newCocktail.getDrinkId()))
                 .willReturn(null);
-
-        given(shoppingListRepository.save(any()))
-                .willReturn(shoppingListEntity);
 
         Assertions.assertThrows(BadRequestException.class, () -> shoppingListService.addCocktailToShoppingList(SHOPPING_LIST_NAME,newCocktail));
 

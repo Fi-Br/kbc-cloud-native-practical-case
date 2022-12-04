@@ -1,6 +1,7 @@
 package com.ezgroceries.shoppinglist.core;
 
 import com.ezgroceries.shoppinglist.contract.Cocktail;
+import com.ezgroceries.shoppinglist.core.exceptions.BadRequestException;
 import com.ezgroceries.shoppinglist.core.model.CocktailDBResponse;
 import com.ezgroceries.shoppinglist.repository.CocktailDBClient;
 import com.ezgroceries.shoppinglist.repository.CocktailRepository;
@@ -23,7 +24,12 @@ public class OverviewCocktailsImpl implements OverviewCocktails {
     }
     @Override
     public List<Cocktail> returnCocktailList(String search){
-        List<CocktailDBResponse.DrinkResource> drinkResourceList = cocktailDBClient.searchCocktails(search).getDrinks();
+        List<CocktailDBResponse.DrinkResource> drinkResourceList;
+        try {
+            drinkResourceList = cocktailDBClient.searchCocktails(search).getDrinks();
+        }catch (NullPointerException e) {
+            throw new BadRequestException();
+        }
 
         List<Cocktail> cocktailList = new ArrayList<>();
         drinkResourceList.forEach(drinkResource ->

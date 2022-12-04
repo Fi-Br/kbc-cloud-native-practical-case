@@ -17,7 +17,12 @@ public final class TestVariables {
     public static final String DRINK_ID = "00000001";
     public static final String COCKTAIL_NAME = "Margerita";
     public static final String GLASS = "Cocktail_glass";
-    public static final List<String> INGREDIENTS = new ArrayList<>(Arrays.asList("Tequilla","Triple Sec", "Lime Juice"));
-
-
+    public static final String INGREDIENT1 = "Tequilla";
+    public static final String INGREDIENT2 = "Triple Sec";
+    public static final String INGREDIENT3 = "Lime Juice";
+    public static final List<String> INGREDIENTS = new ArrayList<>(Arrays.asList(INGREDIENT1,INGREDIENT2, INGREDIENT3));
+    public static final String COCKTAIL_SEARCH = "RUSSIAN";
+    public static final String INSTRUCTIONS = "How to make this cocktail";
+    public static final String DRINK_THUMB = "Some link to a thumb";
+    public static final String DRINK_NAME = "RUSSIAN WHITE";
 }
