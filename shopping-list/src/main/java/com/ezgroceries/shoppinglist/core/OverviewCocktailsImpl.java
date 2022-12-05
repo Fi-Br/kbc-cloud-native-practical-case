@@ -25,6 +25,7 @@ public class OverviewCocktailsImpl implements OverviewCocktails {
     @Override
     public List<Cocktail> returnCocktailList(String search){
         List<CocktailDBResponse.DrinkResource> drinkResourceList;
+
         try {
             drinkResourceList = cocktailDBClient.searchCocktails(search).getDrinks();
         }catch (NullPointerException e) {

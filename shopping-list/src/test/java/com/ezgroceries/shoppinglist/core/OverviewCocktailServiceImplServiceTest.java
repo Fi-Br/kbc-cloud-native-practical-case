@@ -1,9 +1,6 @@
 package com.ezgroceries.shoppinglist.core;
 
 import com.ezgroceries.shoppinglist.contract.Cocktail;
-import com.ezgroceries.shoppinglist.contract.NewCocktail;
-import com.ezgroceries.shoppinglist.contract.NewShoppingList;
-import com.ezgroceries.shoppinglist.contract.ShoppingList;
 import com.ezgroceries.shoppinglist.core.exceptions.BadRequestException;
 import com.ezgroceries.shoppinglist.core.model.CocktailDBResponse;
 import com.ezgroceries.shoppinglist.repository.CocktailDBClient;
@@ -20,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 import static com.ezgroceries.TestVariables.COCKTAIL_ID;
@@ -35,8 +31,6 @@ import static com.ezgroceries.TestVariables.INGREDIENT2;
 import static com.ezgroceries.TestVariables.INGREDIENT3;
 import static com.ezgroceries.TestVariables.INGREDIENTS;
 import static com.ezgroceries.TestVariables.INSTRUCTIONS;
-import static com.ezgroceries.TestVariables.SHOPPING_LIST_ID;
-import static com.ezgroceries.TestVariables.SHOPPING_LIST_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -65,7 +59,7 @@ class OverviewCocktailServiceImplServiceTest {
     private OverviewCocktailsImpl overviewCocktails;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         overviewCocktails = new OverviewCocktailsImpl(cocktailDBClient,cocktailRepository);
         cocktailDBResponse = new CocktailDBResponse();
     }
